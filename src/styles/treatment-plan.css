@@ -1,0 +1,864 @@
+/* Treatment Plan Styles */
+.treatment-plan-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  min-height: 600px;
+}
+
+.treatment-plan-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--border-light);
+  background: white;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.treatment-plan-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-gray-800);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.plan-subtitle {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: 0.9rem;
+}
+
+.create-plan-btn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.create-plan-btn:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+}
+
+.treatment-plan-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Plans Sidebar */
+.plans-sidebar {
+  width: 350px;
+  background: var(--bg-secondary);
+  border-right: 2px solid var(--border-light);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.plans-sidebar h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-gray-700);
+  font-size: 1rem;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.empty-plans {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--color-gray-500);
+}
+
+.empty-plans p {
+  margin: 0 0 1rem 0;
+  font-style: italic;
+}
+
+.create-first-plan {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.create-first-plan:hover {
+  background: var(--color-primary-dark);
+  transform: scale(1.05);
+}
+
+.plans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-item {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.plan-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.plan-item.active {
+  border-color: var(--color-primary);
+  background: rgba(20, 184, 166, 0.05);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
+}
+
+.plan-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.plan-item-header h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.plan-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin-left: 0.5rem;
+}
+
+.plan-item-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.plan-cost {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.plan-dates {
+  font-size: 0.8rem;
+  color: var(--color-gray-500);
+  margin-top: 0.5rem;
+}
+
+.plan-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.plan-item:hover .plan-actions {
+  opacity: 1;
+}
+
+.btn-delete-plan {
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-plan:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+/* Plan Details */
+.plan-details {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+.no-plan-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: var(--color-gray-500);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.no-plan-selected h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-gray-600);
+  font-size: 1.2rem;
+}
+
+.no-plan-selected p {
+  margin: 0;
+  color: var(--color-gray-500);
+  max-width: 300px;
+}
+
+.plan-header {
+  margin-bottom: 2rem;
+}
+
+.plan-title-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.plan-title-input {
+  flex: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 0.5rem;
+  border: 2px solid var(--border-medium);
+  border-radius: 6px;
+  background: white;
+  color: var(--color-gray-800);
+}
+
+.plan-title-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.plan-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-gray-800);
+}
+
+.plan-status-large {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.plan-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.summary-label {
+  color: var(--color-gray-600);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Tabs */
+.plan-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-secondary);
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--color-gray-600);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab-btn:hover {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--color-primary);
+}
+
+.tab-btn.active {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.tab-content {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  min-height: 400px;
+}
+
+/* Overview Tab */
+.progress-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.progress-card {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border-left: 4px solid;
+}
+
+.progress-card.planned {
+  border-left-color: #6b7280;
+}
+
+.progress-card.in-progress {
+  border-left-color: #f59e0b;
+}
+
+.progress-card.completed {
+  border-left-color: #10b981;
+}
+
+.progress-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+}
+
+.progress-label {
+  color: var(--color-gray-600);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.plan-description {
+  margin-bottom: 2rem;
+}
+
+.plan-description h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-gray-700);
+  font-weight: 600;
+}
+
+.plan-description-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-medium);
+  border-radius: 6px;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.plan-description-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.plan-metadata {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.metadata-row {
+  margin-bottom: 0.5rem;
+  color: var(--color-gray-600);
+}
+
+.metadata-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Phases Tab */
+.phase-card {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-light);
+}
+
+.phase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.phase-info h4 {
+  margin: 0 0 0.25rem 0;
+  color: var(--color-gray-800);
+  font-weight: 600;
+}
+
+.phase-info p {
+  margin: 0;
+  color: var(--color-gray-600);
+  font-size: 0.9rem;
+}
+
+.phase-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.phase-cost {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.phase-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.procedures-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.procedure-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.procedure-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
+}
+
+.procedure-info {
+  flex: 1;
+}
+
+.procedure-name {
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tooth-number {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.procedure-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.procedure-category,
+.procedure-duration,
+.procedure-cost {
+  background: var(--bg-secondary);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+}
+
+.procedure-priority {
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.procedure-cost {
+  color: var(--color-primary);
+  font-weight: 700;
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.procedure-description {
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.procedure-status {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 80px;
+}
+
+.add-procedure-btn {
+  background: var(--color-primary);
+  color: white;
+  border: 2px dashed rgba(20, 184, 166, 0.3);
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.add-procedure-btn:hover {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Timeline Tab */
+.timeline-tab {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-gray-500);
+}
+
+.timeline-content p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+/* Procedure Modal */
+.procedure-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.procedure-selection {
+  margin-bottom: 2rem;
+}
+
+.procedure-selection h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-gray-700);
+  font-weight: 600;
+}
+
+.common-procedures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.common-proc-btn {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.common-proc-btn:hover {
+  border-color: var(--color-primary);
+  background: rgba(20, 184, 166, 0.05);
+}
+
+.common-proc-btn.selected {
+  border-color: var(--color-primary);
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.proc-name {
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: 0.25rem;
+}
+
+.proc-details {
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+}
+
+.custom-procedure-form {
+  border-top: 2px solid var(--border-light);
+  padding-top: 1.5rem;
+}
+
+.custom-procedure-form h4 {
+  margin: 0 0 1rem 0;
+  color: var(--color-gray-700);
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--color-gray-700);
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 2px solid var(--border-medium);
+  border-radius: 6px;
+  font-family: inherit;
+  background: var(--bg-primary);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--color-gray-800);
+  font-size: 1.2rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-gray-500);
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-800);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-actions {
+  padding: 1rem 1.5rem;
+  border-top: 2px solid var(--border-light);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--color-gray-700);
+  border: 2px solid var(--border-medium);
+}
+
+.btn-secondary:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .treatment-plan-content {
+    flex-direction: column;
+  }
+  
+  .plans-sidebar {
+    width: 100%;
+    max-height: 300px;
+  }
+  
+  .plan-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .common-procedures-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .procedure-modal {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+    max-width: none;
+  }
+  
+  .plan-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tab-btn {
+    justify-content: flex-start;
+  }
+}

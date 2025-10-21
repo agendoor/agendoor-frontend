@@ -1,0 +1,275 @@
+.clinical-history {
+  padding: 20px;
+}
+
+.history-header {
+  margin-bottom: 24px;
+}
+
+.history-header h3 {
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-size: 20px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-buttons button {
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-buttons button:hover {
+  background: #f9fafb;
+}
+
+.filter-buttons button.active {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.history-timeline {
+  position: relative;
+}
+
+.timeline-item {
+  margin-bottom: 16px;
+}
+
+.history-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.history-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.type-badge {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.date {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-body h4 {
+  margin: 0 0 12px 0;
+  color: #1a1a1a;
+  font-size: 16px;
+}
+
+.card-body p {
+  margin: 8px 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tooth-info {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tooth-number {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.procedure-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.structured-content {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.structured-content .field {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.structured-content .field:last-child {
+  margin-bottom: 0;
+}
+
+.structured-content .field strong {
+  color: #1a1a1a;
+  margin-right: 8px;
+}
+
+.linked-appointment {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.appointment-details {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.appointment-details span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.services-list,
+.products-list {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.services-list strong,
+.products-list strong {
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.loading,
+.no-history {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+}
+
+.no-history p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.clinical-note {
+  border-left: 4px solid #10b981;
+}
+
+.appointment-history {
+  border-left: 4px solid #3b82f6;
+}
+
+.record {
+  border-left: 4px solid #8b5cf6;
+}
+
+.form-section {
+  margin-bottom: 24px;
+}
+
+.form-section h4 {
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-size: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.anamnese-form,
+.prontuario-form {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.form-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.form-header h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  font-size: 20px;
+}
+
+.last-update {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}

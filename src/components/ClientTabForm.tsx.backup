@@ -1,0 +1,729 @@
+import React, { useState, useEffect } from 'react';
+import MedicalCertificateForm from './MedicalCertificateForm';
+import PrescriptionForm from './PrescriptionForm';
+import ServiceHistoryView from './ServiceHistoryView';
+import OdontogramView from './OdontogramView';
+import MedicalRecordView from './MedicalRecordView';
+import DocumentManagerView from './DocumentManagerView';
+import TreatmentPlanView from './TreatmentPlanView';
+import '../styles/client-tab-form.css';
+
+interface BusinessTypeTab {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  isRequired: boolean;
+  sortOrder: number;
+  fieldConfig: string;
+}
+
+interface FieldConfig {
+  name: string;
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+  placeholder?: string;
+  maxLength?: number;
+  rows?: number;
+  min?: number;
+  max?: number;
+  default?: any;
+  defaultValue?: string;
+  readOnly?: boolean;
+  width?: string;
+  dependsOn?: string;
+  showWhen?: string;
+  toolbar?: boolean;
+}
+
+interface SectionConfig {
+  title: string;
+  fields: FieldConfig[];
+  layout?: 'full-width' | 'two-columns';
+}
+
+interface TabFieldConfig {
+  sections?: SectionConfig[];
+  fields?: FieldConfig[];
+  isAdvanced?: boolean;
+  type?: string;
+  customLayout?: boolean;
+}
+
+interface ClientTabFormProps {
+  tab: BusinessTypeTab;
+  data: any;
+  onDataChange: (data: any, notes?: string) => void;
+  saving: boolean;
+  clientId?: string;
+  clientName?: string;
+}
+
+const ClientTabForm: React.FC<ClientTabFormProps> = ({
+  tab,
+  data,
+  onDataChange,
+  saving,
+  clientId,
+  clientName
+}) => {
+  const [formData, setFormData] = useState<any>(data || {});
+  const [notes, setNotes] = useState<string>('');
+  const [fieldConfig, setFieldConfig] = useState<TabFieldConfig>({ fields: [] });
+
+  // Parse field configuration
+  useEffect(() => {
+    try {
+      const config = JSON.parse(tab.fieldConfig);
+      setFieldConfig(config);
+    } catch (error) {
+      console.error('Erro ao fazer parse da configuração dos campos:', error);
+      setFieldConfig({ fields: [] });
+    }
+  }, [tab.fieldConfig]);
+
+  // Update form data when data prop changes
+  useEffect(() => {
+    const initialData = data || {};
+    
+    // Set default values for fields
+    if (fieldConfig.sections) {
+      fieldConfig.sections.forEach(section => {
+        section.fields.forEach(field => {
+          if (field.defaultValue === 'today' && !initialData[field.name]) {
+            initialData[field.name] = new Date().toISOString().split('T')[0];
+          }
+        });
+      });
+    }
+    
+    setFormData(initialData);
+  }, [data, fieldConfig]);
+
+  const handleFieldChange = (fieldName: string, value: any) => {
+    const updatedData = { ...formData, [fieldName]: value };
+    setFormData(updatedData);
+    // Não salvar automaticamente a cada mudança
+  };
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+    // Não salvar automaticamente a cada mudança
+  };
+
+  const handleSaveClick = () => {
+    onDataChange(formData, notes);
+  };
+
+  const shouldShowField = (field: FieldConfig): boolean => {
+    if (!field.dependsOn || !field.showWhen) return true;
+    return formData[field.dependsOn] === field.showWhen;
+  };
+
+  const renderField = (field: FieldConfig) => {
+    const value = formData[field.name] || '';
+    
+    if (!shouldShowField(field)) return null;
+
+    switch (field.type) {
+      case 'text':
+        return (
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            maxLength={field.maxLength}
+            className="form-input"
+            required={field.required}
+          />
+        );
+
+      case 'email':
+        return (
+          <input
+            type="email"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            className="form-input"
+            required={field.required}
+          />
+        );
+
+      case 'tel':
+        return (
+          <input
+            type="tel"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            className="form-input"
+            required={field.required}
+          />
+        );
+
+      case 'number':
+        return (
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, Number(e.target.value))}
+            placeholder={field.placeholder}
+            min={field.min}
+            max={field.max}
+            className="form-input"
+            required={field.required}
+          />
+        );
+
+      case 'currency':
+        return (
+          <div className="currency-input">
+            <span className="currency-symbol">R$</span>
+            <input
+              type="number"
+              step="0.01"
+              value={value}
+              onChange={(e) => handleFieldChange(field.name, Number(e.target.value))}
+              placeholder="0,00"
+              className="form-input"
+              required={field.required}
+            />
+          </div>
+        );
+
+      case 'date':
+        return (
+          <input
+            type="date"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            className="form-input"
+            required={field.required}
+            readOnly={field.readOnly}
+          />
+        );
+
+      case 'time':
+        return (
+          <input
+            type="time"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            className="form-input"
+            required={field.required}
+          />
+        );
+
+      case 'textarea':
+        return (
+          <textarea
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            maxLength={field.maxLength}
+            rows={field.rows || 4}
+            className="form-textarea"
+            required={field.required}
+          />
+        );
+
+      case 'rich-textarea':
+        return (
+          <div className="rich-textarea-container">
+            {field.toolbar && (
+              <div className="rich-textarea-toolbar">
+                <button type="button" className="toolbar-btn" title="Negrito">
+                  <strong>B</strong>
+                </button>
+                <button type="button" className="toolbar-btn" title="Itálico">
+                  <em>I</em>
+                </button>
+                <button type="button" className="toolbar-btn" title="Sublinhado">
+                  <u>U</u>
+                </button>
+                <button type="button" className="toolbar-btn" title="Lista">
+                  • Lista
+                </button>
+              </div>
+            )}
+            <textarea
+              value={value}
+              onChange={(e) => handleFieldChange(field.name, e.target.value)}
+              placeholder={field.placeholder}
+              maxLength={field.maxLength}
+              rows={field.rows || 8}
+              className="form-textarea rich-textarea"
+              required={field.required}
+            />
+          </div>
+        );
+
+      case 'select':
+        return (
+          <select
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            className="form-select"
+            required={field.required}
+          >
+            <option value="">Selecione uma opção</option>
+            {field.options?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+
+      case 'multiselect':
+        const selectedValues = Array.isArray(value) ? value : [];
+        return (
+          <div className="multiselect-container">
+            {field.options?.map((option) => (
+              <label key={option} className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={selectedValues.includes(option)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      handleFieldChange(field.name, [...selectedValues, option]);
+                    } else {
+                      handleFieldChange(field.name, selectedValues.filter(v => v !== option));
+                    }
+                  }}
+                />
+                <span className="checkbox-custom"></span>
+                {option}
+              </label>
+            ))}
+          </div>
+        );
+
+      case 'boolean':
+        return (
+          <label className="switch-label">
+            <input
+              type="checkbox"
+              checked={Boolean(value)}
+              onChange={(e) => handleFieldChange(field.name, e.target.checked)}
+              className="switch-input"
+            />
+            <span className="switch-slider"></span>
+          </label>
+        );
+
+      case 'color':
+        return (
+          <div className="color-input-container">
+            <input
+              type="color"
+              value={value || '#000000'}
+              onChange={(e) => handleFieldChange(field.name, e.target.value)}
+              className="color-input"
+            />
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => handleFieldChange(field.name, e.target.value)}
+              placeholder="#000000"
+              className="form-input color-text"
+              pattern="^#[0-9A-Fa-f]{6}$"
+            />
+          </div>
+        );
+
+      case 'array':
+        const arrayValue = Array.isArray(value) ? value : [];
+        return (
+          <div className="array-field">
+            {arrayValue.map((item: any, index: number) => (
+              <div key={index} className="array-item">
+                <div className="array-item-content">
+                  {typeof item === 'object' ? (
+                    <div className="object-fields">
+                      {Object.entries(item).map(([key, val]) => (
+                        <div key={key} className="object-field">
+                          <label>{key}:</label>
+                          <input
+                            type="text"
+                            value={String(val)}
+                            onChange={(e) => {
+                              const newArray = [...arrayValue];
+                              newArray[index] = { ...item, [key]: e.target.value };
+                              handleFieldChange(field.name, newArray);
+                            }}
+                            className="form-input small"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={String(item)}
+                      onChange={(e) => {
+                        const newArray = [...arrayValue];
+                        newArray[index] = e.target.value;
+                        handleFieldChange(field.name, newArray);
+                      }}
+                      className="form-input"
+                    />
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newArray = arrayValue.filter((_, i) => i !== index);
+                    handleFieldChange(field.name, newArray);
+                  }}
+                  className="remove-item-btn"
+                  title="Remover item"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newArray = [...arrayValue, ''];
+                handleFieldChange(field.name, newArray);
+              }}
+              className="add-item-btn"
+            >
+              + Adicionar item
+            </button>
+          </div>
+        );
+
+      case 'odontogram':
+        return (
+          <div className="odontogram-container">
+            <div className="odontogram-grid">
+              {/* Dentes superiores */}
+              <div className="teeth-row superior">
+                {[...Array(16)].map((_, index) => {
+                  const toothNumber = 18 - index;
+                  const toothKey = `tooth_${toothNumber}`;
+                  const toothState = value[toothKey] || 'healthy';
+                  
+                  return (
+                    <div 
+                      key={toothNumber} 
+                      className={`tooth ${toothState}`}
+                      onClick={() => {
+                        const states = ['healthy', 'cavity', 'filling', 'crown', 'missing'];
+                        const currentIndex = states.indexOf(toothState);
+                        const nextState = states[(currentIndex + 1) % states.length];
+                        const newValue = { ...value, [toothKey]: nextState };
+                        handleFieldChange(field.name, newValue);
+                      }}
+                      title={`Dente ${toothNumber} - ${toothState}`}
+                    >
+                      <div className="tooth-number">{toothNumber}</div>
+                      <div className="tooth-visual"></div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Dentes inferiores */}
+              <div className="teeth-row inferior">
+                {[...Array(16)].map((_, index) => {
+                  const toothNumber = 31 + index;
+                  const toothKey = `tooth_${toothNumber}`;
+                  const toothState = value[toothKey] || 'healthy';
+                  
+                  return (
+                    <div 
+                      key={toothNumber} 
+                      className={`tooth ${toothState}`}
+                      onClick={() => {
+                        const states = ['healthy', 'cavity', 'filling', 'crown', 'missing'];
+                        const currentIndex = states.indexOf(toothState);
+                        const nextState = states[(currentIndex + 1) % states.length];
+                        const newValue = { ...value, [toothKey]: nextState };
+                        handleFieldChange(field.name, newValue);
+                      }}
+                      title={`Dente ${toothNumber} - ${toothState}`}
+                    >
+                      <div className="tooth-number">{toothNumber}</div>
+                      <div className="tooth-visual"></div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <div className="odontogram-legend">
+              <div className="legend-item">
+                <div className="legend-color healthy"></div>
+                <span>Saudável</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color cavity"></div>
+                <span>Cárie</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color filling"></div>
+                <span>Restauração</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color crown"></div>
+                <span>Coroa</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color missing"></div>
+                <span>Ausente</span>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'files':
+        return (
+          <div className="file-upload">
+            <input
+              type="file"
+              multiple
+              onChange={(e) => {
+                // TODO: Implementar upload de arquivos
+                console.log('Files selected:', e.target.files);
+              }}
+              className="file-input"
+              accept="image/*,.pdf,.doc,.docx"
+            />
+            <div className="file-upload-text">
+              Clique para selecionar arquivos ou arraste aqui
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            placeholder={field.placeholder}
+            className="form-input"
+            required={field.required}
+          />
+        );
+    }
+  };
+
+  // Renderizar componentes especializados baseados no slug da aba
+  const renderSpecializedComponent = () => {
+    if (!clientId) {
+      return null;
+    }
+
+    switch (tab.slug) {
+      case 'atestados':
+        return (
+          <MedicalCertificateForm
+            clientId={clientId}
+            clientName={clientName || 'Cliente'}
+            onCertificateGenerated={(certificate) => {
+              // Atualizar dados da aba com o novo atestado
+              const existingCertificates = data?.certificates || [];
+              const updatedData = {
+                ...data,
+                certificates: [certificate, ...existingCertificates]
+              };
+              onDataChange(updatedData);
+            }}
+          />
+        );
+
+      case 'receitas':
+        return (
+          <PrescriptionForm
+            clientId={clientId}
+            clientName={clientName || 'Cliente'}
+            onPrescriptionGenerated={(prescription) => {
+              // Atualizar dados da aba com a nova receita
+              const existingPrescriptions = data?.prescriptions || [];
+              const updatedData = {
+                ...data,
+                prescriptions: [prescription, ...existingPrescriptions]
+              };
+              onDataChange(updatedData);
+            }}
+          />
+        );
+
+      case 'historico-servicos':
+      case 'historico':
+        return (
+          <ServiceHistoryView
+            clientId={clientId}
+            clientName={clientName || 'Cliente'}
+          />
+        );
+
+      case 'odontograma':
+        return (
+          <OdontogramView
+            data={data || {}}
+            onDataChange={(newData) => {
+              onDataChange(newData);
+            }}
+            readOnly={false}
+            clientId={clientId}
+          />
+        );
+
+      case 'prontuario':
+      case 'prontuario-clinico':
+        return (
+          <MedicalRecordView
+            data={data || {}}
+            onDataChange={(newData) => {
+              onDataChange(newData);
+            }}
+            clientName={clientName || 'Cliente'}
+            readOnly={false}
+          />
+        );
+
+      case 'documentos':
+        return (
+          <DocumentManagerView
+            data={data || {}}
+            onDataChange={(newData) => {
+              onDataChange(newData);
+            }}
+            clientName={clientName || 'Cliente'}
+            clientId={clientId}
+            readOnly={false}
+          />
+        );
+
+      case 'plano-tratamento':
+        return (
+          <TreatmentPlanView
+            data={data || {}}
+            onDataChange={(newData) => {
+              onDataChange(newData);
+            }}
+            clientName={clientName || 'Cliente'}
+            clientId={clientId}
+            readOnly={false}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const specializedComponent = renderSpecializedComponent();
+
+  return (
+    <div className="client-tab-form">
+      {/* Renderizar componente especializado se existir */}
+      {specializedComponent && (
+        <div className="specialized-component">
+          {specializedComponent}
+        </div>
+      )}
+
+      {/* Renderizar formulário padrão apenas se não houver componente especializado */}
+      {!specializedComponent && (
+        <div className="form-container">
+          {/* Renderizar seções se existirem */}
+          {fieldConfig.sections ? (
+            fieldConfig.sections.map((section, sectionIndex) => (
+              <div key={sectionIndex} className={`form-section ${section.layout ? `layout-${section.layout}` : ''}`}>
+                <h4 className="section-title">{section.title}</h4>
+                <div className={`section-fields ${section.layout === 'two-columns' ? 'two-columns-grid' : ''}`}>
+                  {section.fields.map((field) => {
+                    if (!shouldShowField(field)) return null;
+                    
+                    return (
+                      <div 
+                        key={field.name} 
+                        className={`form-field ${field.type} ${field.width ? `width-${field.width.replace('%', '')}` : ''}`}
+                        style={field.width ? { width: field.width } : {}}
+                      >
+                        <label className="form-label">
+                          {field.label}
+                          {field.required && <span className="required-asterisk">*</span>}
+                        </label>
+                        {renderField(field)}
+                      </div>
+                    );
+                  }))}
+                </div>
+              </div>
+            ))
+          ) : fieldConfig.fields && fieldConfig.fields.length > 0 ? (
+            /* Renderizar campos simples se não houver seções */
+            <div className="form-fields">
+              {fieldConfig.fields.map((field) => (
+                <div key={field.name} className={`form-field ${field.type}`}>
+                  <label className="form-label">
+                    {field.label}
+                    {field.required && <span className="required-asterisk">*</span>}
+                  </label>
+                  {renderField(field)}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-fields">
+              <p>Nenhum campo configurado para esta aba.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Renderizar área de observações apenas se não for uma aba especializada */}
+      {!specializedComponent && (
+        <div className="form-notes">
+          <label className="form-label">Observações</label>
+          <textarea
+            value={notes}
+            onChange={(e) => handleNotesChange(e.target.value)}
+            placeholder="Adicione observações específicas para esta aba..."
+            rows={3}
+            className="form-textarea"
+          />
+        </div>
+      )}
+
+      {/* Renderizar botão de salvar apenas se não for uma aba especializada */}
+      {!specializedComponent && (
+        <div className="form-actions">
+          <button 
+            type="button" 
+            onClick={handleSaveClick}
+            className="save-btn"
+            disabled={saving}
+          >
+            {saving ? (
+              <>
+                <span className="saving-spinner">💾</span>
+                Salvando...
+              </>
+            ) : (
+              <>
+                💾 Salvar Alterações
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ClientTabForm;
