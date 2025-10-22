@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import '../styles/treatment-plan.css';
 
@@ -46,22 +47,15 @@ interface TreatmentPlan {
 
 interface TreatmentPlanViewProps {
   data: { treatmentPlans?: TreatmentPlan[] };
-
+  onDataChange: (data: { treatmentPlans: TreatmentPlan[] }) => void;
   clientName: string;
-
   readOnly?: boolean;
 }
 
-const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
-  data,
-
-  clientName,
-
-  readOnly = false
-}) => {
+const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({ data, onDataChange, clientName, readOnly = false }) => {
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(data?.treatmentPlans || []);
   const [selectedPlan, setSelectedPlan] = useState<TreatmentPlan | null>(null);
-  const [, setShowNewPlanModal] = useState(false);
+  const [showNewPlanModal, setShowNewPlanModal] = useState(false);
   const [showProcedureModal, setShowProcedureModal] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -152,7 +146,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
   };
 
   const updatePlan = (updatedPlan: TreatmentPlan) => {
-    const updatedPlans = treatmentPlans.map(plan => 
+    const updatedPlans = treatmentPlans.map(plan =>
       plan.id === updatedPlan.id ? { ...updatedPlan, lastModified: new Date().toISOString() } : plan
     );
     setTreatmentPlans(updatedPlans);
@@ -165,7 +159,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
       const updatedPlans = treatmentPlans.filter(plan => plan.id !== planId);
       setTreatmentPlans(updatedPlans);
       onDataChange({ treatmentPlans: updatedPlans });
-      
+
       if (selectedPlan?.id === planId) {
         setSelectedPlan(null);
       }
@@ -191,8 +185,8 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
 
     const updatedPlan = {
       ...selectedPlan,
-      phases: selectedPlan.phases.map(phase => 
-        phase.id === phaseId 
+      phases: selectedPlan.phases.map(phase =>
+        phase.id === phaseId
           ? {
               ...phase,
               procedures: [...phase.procedures, newProcedure],
@@ -204,7 +198,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
 
     // Recalcular custo total do plano
     updatedPlan.totalCost = updatedPlan.phases.reduce((sum, phase) => sum + phase.totalCost, 0);
-    
+
     updatePlan(updatedPlan);
     setShowProcedureModal(false);
   };
@@ -228,9 +222,9 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
       <div className="treatment-plan-header">
         <h3>🦷 Plano de Tratamento</h3>
         <p className="plan-subtitle">Paciente: <strong>{clientName}</strong></p>
-        
+
         {!readOnly && (
-          <button 
+          <button
             className="create-plan-btn"
             onClick={() => setShowNewPlanModal(true)}
           >
@@ -243,12 +237,12 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
         {/* Lista de Planos */}
         <div className="plans-sidebar">
           <h4>Planos de Tratamento</h4>
-          
+
           {treatmentPlans.length === 0 ? (
             <div className="empty-plans">
               <p>📋 Nenhum plano criado ainda.</p>
               {!readOnly && (
-                <button 
+                <button
                   className="create-first-plan"
                   onClick={createNewPlan}
                 >
@@ -259,21 +253,21 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
           ) : (
             <div className="plans-list">
               {treatmentPlans.map(plan => (
-                <div 
+                <div
                   key={plan.id}
                   className={`plan-item ${selectedPlan?.id === plan.id ? 'active' : ''}`}
                   onClick={() => setSelectedPlan(plan)}
                 >
                   <div className="plan-item-header">
                     <h5>{plan.title}</h5>
-                    <span 
+                    <span
                       className="plan-status-badge"
                       style={{ backgroundColor: getStatusColor(plan.status) }}
                     >
                       {getStatusLabel(plan.status)}
                     </span>
                   </div>
-                  
+
                   <div className="plan-item-info">
                     <div className="plan-cost">{formatCurrency(plan.totalCost)}</div>
                     <div className="plan-phases">{plan.phases.length} fase(s)</div>
@@ -281,7 +275,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
                       {plan.phases.reduce((total, phase) => total + phase.procedures.length, 0)} procedimento(s)
                     </div>
                   </div>
-                  
+
                   {plan.startDate && (
                     <div className="plan-dates">
                       📅 {new Date(plan.startDate).toLocaleDateString('pt-BR')}
@@ -291,7 +285,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
 
                   {!readOnly && (
                     <div className="plan-actions">
-                      <button 
+                      <button
                         className="btn-delete-plan"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -312,123 +306,77 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
         <div className="plan-details">
           {selectedPlan ? (
             <>
-              <div className="plan-header">
+              <div className="plan-details-header">
                 <div className="plan-title-section">
-                  {!readOnly ? (
-                    <input
-                      type="text"
-                      value={selectedPlan.title}
-                      onChange={(e) => updatePlan({ ...selectedPlan, title: e.target.value })}
-                      className="plan-title-input"
-                    />
-                  ) : (
-                    <h2>{selectedPlan.title}</h2>
-                  )}
-                  
-                  <div 
-                    className="plan-status-large"
+                  <input
+                    type="text"
+                    value={selectedPlan.title}
+                    onChange={(e) => updatePlan({ ...selectedPlan, title: e.target.value })}
+                    className="plan-title-input"
+                    readOnly={readOnly}
+                  />
+                  <span
+                    className="plan-status-badge"
                     style={{ backgroundColor: getStatusColor(selectedPlan.status) }}
                   >
                     {getStatusLabel(selectedPlan.status)}
-                  </div>
+                  </span>
                 </div>
 
-                <div className="plan-summary">
-                  <div className="summary-card">
-                    <div className="summary-value">{formatCurrency(selectedPlan.totalCost)}</div>
-                    <div className="summary-label">Custo Total</div>
+                {!readOnly && (
+                  <div className="plan-main-actions">
+                    <button className="btn-secondary">Imprimir</button>
+                    <button className="btn-primary">Aprovar Plano</button>
                   </div>
-                  
-                  <div className="summary-card">
-                    <div className="summary-value">{selectedPlan.phases.length}</div>
-                    <div className="summary-label">Fases</div>
-                  </div>
-                  
-                  <div className="summary-card">
-                    <div className="summary-value">
-                      {selectedPlan.phases.reduce((total, phase) => total + phase.procedures.length, 0)}
-                    </div>
-                    <div className="summary-label">Procedimentos</div>
-                  </div>
-                  
-                  <div className="summary-card">
-                    <div className="summary-value">{selectedPlan.estimatedTotalTime || 0}</div>
-                    <div className="summary-label">Semanas</div>
-                  </div>
-                </div>
+                )}
               </div>
 
               <div className="plan-tabs">
-                <button 
+                <button
                   className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                   onClick={() => setActiveTab('overview')}
                 >
-                  📊 Visão Geral
+                  Visão Geral
                 </button>
-                <button 
+                <button
                   className={`tab-btn ${activeTab === 'phases' ? 'active' : ''}`}
                   onClick={() => setActiveTab('phases')}
                 >
-                  📋 Fases do Tratamento
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'timeline' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('timeline')}
-                >
-                  📅 Cronograma
+                  Fases e Procedimentos
                 </button>
               </div>
 
               {activeTab === 'overview' && (
                 <div className="tab-content overview-tab">
-                  <div className="progress-cards">
-                    <div className="progress-card planned">
-                      <div className="progress-number">{getTotalProceduresByStatus('planejado')}</div>
-                      <div className="progress-label">Planejados</div>
+                  <div className="overview-grid">
+                    <div className="overview-card">
+                      <h4>Status do Plano</h4>
+                      <p>{getStatusLabel(selectedPlan.status)}</p>
                     </div>
-                    <div className="progress-card in-progress">
-                      <div className="progress-number">{getTotalProceduresByStatus('em_andamento')}</div>
-                      <div className="progress-label">Em Andamento</div>
+                    <div className="overview-card">
+                      <h4>Custo Total</h4>
+                      <p>{formatCurrency(selectedPlan.totalCost)}</p>
                     </div>
-                    <div className="progress-card completed">
-                      <div className="progress-number">{getTotalProceduresByStatus('concluido')}</div>
-                      <div className="progress-label">Concluídos</div>
+                    <div className="overview-card">
+                      <h4>Duração Estimada</h4>
+                      <p>{selectedPlan.estimatedTotalTime} semanas</p>
                     </div>
-                  </div>
-
-                  <div className="plan-description">
-                    <h4>Descrição do Plano</h4>
-                    {!readOnly ? (
-                      <textarea
-                        value={selectedPlan.description || ''}
-                        onChange={(e) => updatePlan({ ...selectedPlan, description: e.target.value })}
-                        placeholder="Descrição detalhada do plano de tratamento..."
-                        rows={4}
-                        className="plan-description-textarea"
-                      />
-                    ) : (
-                      <p>{selectedPlan.description || 'Nenhuma descrição disponível.'}</p>
-                    )}
-                  </div>
-
-                  <div className="plan-metadata">
-                    <div className="metadata-row">
-                      <strong>Criado por:</strong> {selectedPlan.createdBy}
+                    <div className="overview-card">
+                      <h4>Procedimentos Planejados</h4>
+                      <p>{getTotalProceduresByStatus('planejado')}</p>
                     </div>
-                    <div className="metadata-row">
-                      <strong>Data de criação:</strong> 
-                      {selectedPlan.createdAt && new Date(selectedPlan.createdAt).toLocaleDateString('pt-BR')}
-                    </div>
-                    <div className="metadata-row">
-                      <strong>Última modificação:</strong> 
-                      {selectedPlan.lastModified && new Date(selectedPlan.lastModified).toLocaleDateString('pt-BR')}
+                    <div className="overview-card">
+                      <h4>Procedimentos Concluídos</h4>
+                      <p>{getTotalProceduresByStatus('concluido')}</p>
                     </div>
                   </div>
                 </div>
               )}
 
               {activeTab === 'phases' && (
-                <div className="tab-content phases-tab"            {selectedPlan.phases.map((phase) => (             <div className="phase-card" key={phase.id}>rd">
+                <div className="tab-content phases-tab">
+                  {selectedPlan.phases.map((phase) => (
+                    <div className="phase-card" key={phase.id}>
                       <div className="phase-header">
                         <div className="phase-info">
                           <h4>{phase.name}</h4>
@@ -436,7 +384,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
                         </div>
                         <div className="phase-meta">
                           <div className="phase-cost">{formatCurrency(phase.totalCost)}</div>
-                          <span 
+                          <span
                             className="phase-status"
                             style={{ backgroundColor: getStatusColor(phase.status) }}
                           >
@@ -446,292 +394,126 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
                       </div>
 
                       <div className="procedures-list">
-                        {phase.procedures.map(procedure => (
-                          <div key={procedure.id} className="procedure-item">
-                            <div className="procedure-info">
-                              <div className="procedure-name">
-                                {procedure.name}
-                                {procedure.toothNumber && (
-                                  <span className="tooth-number">Dente {procedure.toothNumber}</span>
-                                )}
+                        {phase.procedures.length > 0 ? (
+                          phase.procedures.map(proc => (
+                            <div className="procedure-item" key={proc.id}>
+                              <div className="procedure-main">
+                                <span className="procedure-tooth">Dente: {proc.toothNumber || 'N/A'}</span>
+                                <span className="procedure-name">{proc.name}</span>
                               </div>
                               <div className="procedure-details">
-                                <span className="procedure-category">{procedure.category}</span>
-                                <span 
+                                <span className="procedure-cost">{formatCurrency(proc.estimatedCost)}</span>
+                                <span
                                   className="procedure-priority"
-                                  style={{ backgroundColor: getPriorityColor(procedure.priority) }}
+                                  style={{ backgroundColor: getPriorityColor(proc.priority) }}
                                 >
-                                  {procedure.priority}
+                                  {proc.priority}
                                 </span>
-                                <span className="procedure-duration">{procedure.estimatedDuration}min</span>
-                                <span className="procedure-cost">{formatCurrency(procedure.estimatedCost)}</span>
+                                <span
+                                  className="procedure-status"
+                                  style={{ backgroundColor: getStatusColor(proc.status) }}
+                                >
+                                  {getStatusLabel(proc.status)}
+                                </span>
                               </div>
-                              {procedure.description && (
-                                <div className="procedure-description">{procedure.description}</div>
-                              )}
                             </div>
-                            <div 
-                              className="procedure-status"
-                              style={{ backgroundColor: getStatusColor(procedure.status) }}
-                            >
-                              {getStatusLabel(procedure.status)}
-                            </div>
-                          </div>
-                        ))}
+                          ))
+                        ) : (
+                          <p className="no-procedures">Nenhum procedimento nesta fase.</p>
+                        )}
+                      </div>
 
-                        {!readOnly && (
+                      {!readOnly && (
+                        <div className="phase-actions">
                           <button
-                            className="add-procedure-btn"
+                            className="btn-add-procedure"
                             onClick={() => {
                               setSelectedPhase(phase.id);
                               setShowProcedureModal(true);
                             }}
                           >
-                            ➕ Adicionar Procedimento
+                            Adicionar Procedimento
                           </button>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
-
-              {activeTab === 'timeline' && (
-                <div className="tab-content timeline-tab">
-                  <div className="timeline-content">
-                    <p>🚧 Cronograma visual em desenvolvimento</p>
-                    <p>Em breve: visualização de cronograma com datas e dependências entre procedimentos.</p>
-                  </div>
-                </div>
-              )}
             </>
           ) : (
-            <div className="no-plan-selected">
-              <div className="empty-icon">📋</div>
-              <h4>Nenhum plano selecionado</h4>
-              <p>Selecione um plano na lista ao lado ou crie um novo para começar.</p>
+            <div className="empty-details">
+              <div className="empty-icon">📄</div>
+              <h4>Selecione um Plano</h4>
+              <p>Escolha um plano de tratamento na lista ao lado para ver os detalhes.</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Modal para adicionar procedimento */}
-      {showProcedureModal && !readOnly && selectedPhase && (
-        <ProcedureModal
-          isOpen={showProcedureModal}
-          onClose={() => setShowProcedureModal(false)}
-          onAdd={(procedure) => addProcedureToPhase(selectedPhase, procedure)}
-          commonProcedures={commonProcedures}
-        />
+      {showProcedureModal && selectedPhase && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Adicionar Procedimento</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const procedureName = (form.elements.namedItem('procedureName') as HTMLSelectElement).value;
+              const toothNumber = (form.elements.namedItem('toothNumber') as HTMLInputElement).value;
+              const notes = (form.elements.namedItem('notes') as HTMLTextAreaElement).value;
+
+              const commonProc = commonProcedures.find(p => p.name === procedureName);
+
+              if (commonProc) {
+                addProcedureToPhase(selectedPhase, {
+                  name: commonProc.name,
+                  category: commonProc.category,
+                  estimatedCost: commonProc.basePrice,
+                  estimatedDuration: commonProc.duration,
+                  toothNumber,
+                  notes,
+                });
+              }
+            }}>
+              <div className="form-group">
+                <label>Procedimento</label>
+                <select name="procedureName" required>
+                  {commonProcedures.map(proc => (
+                    <option key={proc.name} value={proc.name}>
+                      {proc.name} ({formatCurrency(proc.basePrice)})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Número do Dente (opcional)</label>
+                <input type="text" name="toothNumber" placeholder="Ex: 11, 24, 36..." />
+              </div>
+              <div className="form-group">
+                <label>Observações (opcional)</label>
+                <textarea name="notes" rows={3}></textarea>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowProcedureModal(false)}>Cancelar</button>
+                <button type="submit" className="btn-primary">Adicionar</button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
-    </div>
-  );
-};
 
-// Componente Modal para Adicionar Procedimento
-interface ProcedureModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAdd: (procedure: Partial<Procedure>) => void;
-  commonProcedures: Array<{
-    name: string;
-    category: string;
-    basePrice: number;
-    duration: number;
-  }>;
-}
-
-const ProcedureModal: React.FC<ProcedureModalProps> = ({
-  isOpen,
-  onClose,
-  onAdd,
-  commonProcedures
-}) => {
-  const [selectedCommon, setSelectedCommon] = useState('');
-  const [customProcedure, setCustomProcedure] = useState({
-    name: '',
-    toothNumber: '',
-    category: 'restaurador',
-    description: '',
-    priority: 'media' as const,
-    estimatedCost: 0,
-    estimatedDuration: 60,
-    notes: ''
-  });
-
-  const handleCommonProcedureSelect = (procedureName: string) => {
-    const procedure = commonProcedures.find(p => p.name === procedureName);
-    if (procedure) {
-      setCustomProcedure({
-        ...customProcedure,
-        name: procedure.name,
-        category: procedure.category,
-        estimatedCost: procedure.basePrice,
-        estimatedDuration: procedure.duration
-      });
-      setSelectedCommon(procedureName);
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!customProcedure.name) {
-      alert('Nome do procedimento é obrigatório');
-      return;
-    }
-    
-    onAdd(customProcedure);
-    
-    // Reset form
-    setCustomProcedure({
-      name: '',
-      toothNumber: '',
-      category: 'restaurador',
-      description: '',
-      priority: 'media',
-      estimatedCost: 0,
-      estimatedDuration: 60,
-      notes: ''
-    });
-    setSelectedCommon('');
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="procedure-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>➕ Adicionar Procedimento</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-
-        <div className="modal-body">
-          <div className="procedure-selection">
-            <h4>Procedimentos Comuns</h4>
-            <div className="common-procedures-grid">
-              {commonProcedures.map(proc => (
-                <button
-                  key={proc.name}
-                  className={`common-proc-btn ${selectedCommon === proc.name ? 'selected' : ''}`}
-                  onClick={() => handleCommonProcedureSelect(proc.name)}
-                >
-                  <div className="proc-name">{proc.name}</div>
-                  <div className="proc-details">
-                    {proc.category} • R$ {proc.basePrice} • {proc.duration}min
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="custom-procedure-form">
-            <h4>Detalhes do Procedimento</h4>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label>Nome do Procedimento *</label>
-                <input
-                  type="text"
-                  value={customProcedure.name}
-                  onChange={(e) => setCustomProcedure({...customProcedure, name: e.target.value})}
-                  placeholder="Ex: Restauração com resina"
-                />
-              </div>
-              <div className="form-group">
-                <label>Dente</label>
-                <input
-                  type="text"
-                  value={customProcedure.toothNumber}
-                  onChange={(e) => setCustomProcedure({...customProcedure, toothNumber: e.target.value})}
-                  placeholder="Ex: 11, 21, 36..."
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Categoria</label>
-                <select
-                  value={customProcedure.category}
-                  onChange={(e) => setCustomProcedure({...customProcedure, category: e.target.value})}
-                >
-                  <option value="preventivo">Preventivo</option>
-                  <option value="restaurador">Restaurador</option>
-                  <option value="endodontico">Endodôntico</option>
-                  <option value="cirurgico">Cirúrgico</option>
-                  <option value="protetico">Protético</option>
-                  <option value="estetico">Estético</option>
-                  <option value="exame">Exame</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Prioridade</label>
-                <select
-                  value={customProcedure.priority}
-                  onChange={(e) => setCustomProcedure({...customProcedure, priority: e.target.value as any})}
-                >
-                  <option value="baixa">Baixa</option>
-                  <option value="media">Média</option>
-                  <option value="alta">Alta</option>
-                  <option value="urgente">Urgente</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Custo Estimado (R$)</label>
-                <input
-                  type="number"
-                  value={customProcedure.estimatedCost}
-                  onChange={(e) => setCustomProcedure({...customProcedure, estimatedCost: Number(e.target.value)})}
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-              <div className="form-group">
-                <label>Duração (minutos)</label>
-                <input
-                  type="number"
-                  value={customProcedure.estimatedDuration}
-                  onChange={(e) => setCustomProcedure({...customProcedure, estimatedDuration: Number(e.target.value)})}
-                  min="15"
-                  step="15"
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Descrição</label>
-              <textarea
-                value={customProcedure.description}
-                onChange={(e) => setCustomProcedure({...customProcedure, description: e.target.value})}
-                placeholder="Descrição detalhada do procedimento..."
-                rows={3}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Observações</label>
-              <textarea
-                value={customProcedure.notes}
-                onChange={(e) => setCustomProcedure({...customProcedure, notes: e.target.value})}
-                placeholder="Observações adicionais..."
-                rows={2}
-              />
+      {showNewPlanModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Criar Novo Plano de Tratamento</h3>
+            <p>Deseja criar um novo plano de tratamento para {clientName}?</p>
+            <div className="modal-actions">
+              <button type="button" className="btn-secondary" onClick={() => setShowNewPlanModal(false)}>Cancelar</button>
+              <button type="button" className="btn-primary" onClick={createNewPlan}>Criar Plano</button>
             </div>
           </div>
         </div>
-
-        <div className="modal-actions">
-          <button className="btn-secondary" onClick={onClose}>
-            Cancelar
-          </button>
-          <button className="btn-primary" onClick={handleSubmit}>
-            ➕ Adicionar Procedimento
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
