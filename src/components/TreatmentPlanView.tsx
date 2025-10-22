@@ -289,7 +289,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({ data, onDataChang
                         className="btn-delete-plan"
                         onClick={(e) => {
                           e.stopPropagation();
-                          deletePlan(plan.id!);
+                          deletePlan(plan.id!); 
                         }}
                       >
                         🗑️
@@ -519,3 +519,4 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({ data, onDataChang
 };
 
 export default TreatmentPlanView;
+
