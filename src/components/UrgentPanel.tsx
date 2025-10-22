@@ -1,20 +1,8 @@
 import React from 'react';
 import '../styles/urgent-panel.css';
 
-interface ClientNote {
-  id: string;
-  date: string;
-  content: string;
-  author: string;
-}
 
-interface ClientHistory {
-  id: string;
-  date: string;
-  service: string;
-  professional: string;
-  status: 'completed' | 'no_show' | 'cancelled';
-}
+
 
 
 interface UrgentPanelProps {
