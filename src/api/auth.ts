@@ -1,4 +1,6 @@
 import axios from './axios';
+import { auth } from '../config/firebase'; // Importa a instância do auth do Firebase
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User as FirebaseUser } from 'firebase/auth';
 
 export interface RegisterData {
   fullName: string;
@@ -44,41 +46,62 @@ export interface User {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  token: string; // Firebase token
+  user: User; // User data from our backend after Firebase auth
   message?: string;
 }
 
 export const authApi = {
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await axios.post('/auth/register', data);
-    return response.data;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      // Enviar o token do Firebase e outros dados do usuário para o backend para criar o perfil no Prisma
+      const response = await axios.post('/auth/register', { ...data, firebaseId: firebaseUser.uid, idToken });
+      return response.data;
+    } catch (error: any) {
+      console.error('Erro no registro com Firebase:', error.message);
+      throw new Error(error.message || 'Erro ao registrar usuário com Firebase.');
+    }
   },
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await axios.post('/auth/login', data);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      // Enviar o token do Firebase para o backend para validação e obtenção de dados do usuário
+      const response = await axios.post('/auth/login', { idToken });
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token); // Este token pode ser o JWT do backend ou o idToken do Firebase
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Erro no login com Firebase:', error.message);
+      throw new Error(error.message || 'Erro ao fazer login com Firebase.');
     }
-    return response.data;
   },
 
   async logout(): Promise<void> {
-    await axios.post('/auth/logout');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userEmail');
+    try {
+      await signOut(auth);
+      // Não precisamos mais chamar o backend para logout, apenas limpar o estado local
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userEmail');
+    } catch (error: any) {
+      console.error('Erro ao fazer logout com Firebase:', error.message);
+      throw new Error(error.message || 'Erro ao fazer logout com Firebase.');
+    }
   },
 
-  async validateToken(): Promise<{ user: User }> {
-    const response = await axios.post('/auth/validate');
-    return response.data;
-  },
-
-  async me(): Promise<{ user: User }> {
-    const response = await axios.get('/auth/me');
+  async me(idToken: string): Promise<{ user: User }> {
+    const response = await axios.get("/auth/me", { headers: { Authorization: `Bearer ${idToken}` } });
     return response.data;
   },
 
