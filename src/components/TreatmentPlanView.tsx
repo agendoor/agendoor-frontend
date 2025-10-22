@@ -46,22 +46,22 @@ interface TreatmentPlan {
 
 interface TreatmentPlanViewProps {
   data: { treatmentPlans?: TreatmentPlan[] };
-  onDataChange: (data: { treatmentPlans: TreatmentPlan[] }) => void;
+
   clientName: string;
-  clientId?: string;
+
   readOnly?: boolean;
 }
 
 const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
   data,
-  onDataChange,
+
   clientName,
-  clientId,
+
   readOnly = false
 }) => {
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>(data?.treatmentPlans || []);
   const [selectedPlan, setSelectedPlan] = useState<TreatmentPlan | null>(null);
-  const [showNewPlanModal, setShowNewPlanModal] = useState(false);
+  const [, setShowNewPlanModal] = useState(false);
   const [showProcedureModal, setShowProcedureModal] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -428,9 +428,7 @@ const TreatmentPlanView: React.FC<TreatmentPlanViewProps> = ({
               )}
 
               {activeTab === 'phases' && (
-                <div className="tab-content phases-tab">
-                  {selectedPlan.phases.map((phase, phaseIndex) => (
-                    <div key={phase.id} className="phase-card">
+                <div className="tab-content phases-tab"            {selectedPlan.phases.map((phase) => (             <div className="phase-card" key={phase.id}>rd">
                       <div className="phase-header">
                         <div className="phase-info">
                           <h4>{phase.name}</h4>

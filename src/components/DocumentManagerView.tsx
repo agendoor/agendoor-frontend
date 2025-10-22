@@ -24,7 +24,7 @@ interface DocumentCategory {
 
 interface DocumentManagerViewProps {
   data: { documents?: Document[] };
-  onDataChange: (data: { documents: Document[] }) => void;
+
   clientName: string;
   clientId?: string;
   readOnly?: boolean;
@@ -32,8 +32,7 @@ interface DocumentManagerViewProps {
 
 const DocumentManagerView: React.FC<DocumentManagerViewProps> = ({ 
   data, 
-  onDataChange, 
-  clientName,
+  clientName, 
   clientId,
   readOnly = false 
 }) => {
