@@ -84,13 +84,14 @@ const ClinicalHistory: React.FC<ClinicalHistoryProps> = ({ clientId }) => {
             <p>{content}</p>
           ) : (
             <div className="structured-content">
-              {Object.entries(content).map(([key, value]) => (
-                value && (
+              {Object.entries(content).map(([key, value]) => {
+                if (value === null || value === undefined) return null;
+                return (
                   <div key={key} className="field">
                     <strong>{key}:</strong> {String(value)}
                   </div>
-                )
-              ))}
+                );
+              })}
             </div>
           )}
           {note.appointment && (
