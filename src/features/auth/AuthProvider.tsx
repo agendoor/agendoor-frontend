@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { authApi } from '../../api/auth';
 import type { User } from '../../api/auth';
 import { auth } from '../../config/firebase'; // Importa a instância do auth do Firebase
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';\nimport type { User as FirebaseUser } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
