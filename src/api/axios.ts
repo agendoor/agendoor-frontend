@@ -1,6 +1,5 @@
 import axios from 'axios';
-const baseURL = import.meta.env.VITE_API_BASE_URL || 
-''; // A URL do Render será injetada pelo Vercel via VITE_API_BASE_URL
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://agendoor-backend.onrender.com';
 
 const axiosInstance = axios.create({
   baseURL,
