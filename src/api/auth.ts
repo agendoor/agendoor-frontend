@@ -1,6 +1,6 @@
 import axios from './axios';
 import { auth } from '../config/firebase'; // Importa a instância do auth do Firebase
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';\nimport type { User as FirebaseUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User as FirebaseUser } from 'firebase/auth';
 
 export interface RegisterData {
   fullName: string;
