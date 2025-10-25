@@ -3,19 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import logo from '../../assets/logo.png';
 
-interface BusinessType {
-  id: string;
-  name: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-}
+
 
 const RegisterForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -45,19 +39,7 @@ const RegisterForm: React.FC = () => {
     plan: 'basic'
   });
 
-  useEffect(() => {
-    const loadBusinessTypes = async () => {
-      try {
-        const response = await fetch('/api/business-types');
-        const data = await response.json();
-        setBusinessTypes(data.businessTypes || []);
-      } catch (error) {
-        console.error('Erro ao carregar tipos de negócio:', error);
-      }
-    };
 
-    loadBusinessTypes();
-  }, []);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -135,10 +117,7 @@ const RegisterForm: React.FC = () => {
       setError('Por favor, preencha o endereço da empresa completo');
       return false;
     }
-    if (!formData.businessTypeId) {
-      setError('Por favor, selecione o tipo de negócio');
-      return false;
-    }
+
     if (formData.businessDays.length === 0) {
       setError('Por favor, selecione pelo menos um dia de atendimento');
       return false;
@@ -392,34 +371,7 @@ const RegisterForm: React.FC = () => {
 
             {step === 2 && (
               <>
-                <div className="form-group">
-                  <label style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px', display: 'block' }}>
-                    Tipo de Negócio *
-                  </label>
-                  <select
-                    value={formData.businessTypeId}
-                    onChange={(e) => handleInputChange('businessTypeId', e.target.value)}
-                    required
-                    disabled={isLoading}
-                    style={{
-                      width: '100%',
-                      padding: '1rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
-                      background: '#f9fafb',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="">Selecione o tipo de negócio</option>
-                    {businessTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.icon ? `${type.icon} ` : ''}{type.name}
-                        {type.description ? ` - ${type.description}` : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+
 
                 <div className="form-group">
                   <input

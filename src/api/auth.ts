@@ -23,7 +23,7 @@ export interface RegisterData {
   companyNeighborhood: string;
   companyCity: string;
   companyState: string;
-  businessTypeId?: string;
+  businessTypeId?: string; // Tornando opcional
   businessDays: number[];
   plan: string;
 }
@@ -41,7 +41,7 @@ export interface User {
   company?: {
     id: string;
     name: string;
-    businessTypeId?: string;
+    businessTypeId?: string; // Tornando opcional
   };
 }
 
