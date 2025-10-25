@@ -3,13 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import logo from '../../assets/logo.png';
 
-
+interface BusinessType {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+}
 
 const RegisterForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -39,7 +45,19 @@ const RegisterForm: React.FC = () => {
     plan: 'basic'
   });
 
+  useEffect(() => {
+    const loadBusinessTypes = async () => {
+      try {
+        const response = await fetch('/api/business-types');
+        const data = await response.json();
+        setBusinessTypes(data.businessTypes || []);
+      } catch (error) {
+        console.error('Erro ao carregar tipos de negócio:', error);
+      }
+    };
 
+    loadBusinessTypes();
+  }, []);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -117,7 +135,6 @@ const RegisterForm: React.FC = () => {
       setError('Por favor, preencha o endereço da empresa completo');
       return false;
     }
-
     if (formData.businessDays.length === 0) {
       setError('Por favor, selecione pelo menos um dia de atendimento');
       return false;
@@ -307,25 +324,24 @@ const RegisterForm: React.FC = () => {
                       type="text"
                       placeholder="CEP"
                       value={formData.cep}
-                      onChange={(e) => {
-                        handleInputChange('cep', e.target.value);
-                        handleCepChange(e.target.value);
-                      }}
+                      onChange={(e) => handleCepChange(e.target.value)}
                       required
                       disabled={isLoading}
                     />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div className="form-group-row">
+                    <div className="form-group" style={{ flex: 3 }}>
                       <input
                         type="text"
                         placeholder="Rua"
                         value={formData.street}
-                        readOnly
+                        onChange={(e) => handleInputChange('street', e.target.value)}
+                        required
+                        disabled={isLoading}
                       />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" style={{ flex: 1 }}>
                       <input
                         type="text"
                         placeholder="Número"
@@ -337,23 +353,15 @@ const RegisterForm: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        placeholder="Bairro"
-                        value={formData.neighborhood}
-                        readOnly
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        placeholder="Cidade"
-                        value={formData.city}
-                        readOnly
-                      />
-                    </div>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      placeholder="Bairro"
+                      value={formData.neighborhood}
+                      onChange={(e) => handleInputChange('neighborhood', e.target.value)}
+                      required
+                      disabled={isLoading}
+                    />
                   </div>
 
                   <div className="form-group">
@@ -371,7 +379,33 @@ const RegisterForm: React.FC = () => {
 
             {step === 2 && (
               <>
-
+                <div className="form-group">
+                  <label style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px', display: 'block' }}>
+                    Tipo de Negócio (Opcional)
+                  </label>
+                  <select
+                    value={formData.businessTypeId}
+                    onChange={(e) => handleInputChange('businessTypeId', e.target.value)}
+                    disabled={isLoading}
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      background: '#f9fafb',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">Selecione o tipo de negócio</option>
+                    {businessTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.icon ? `${type.icon} ` : ''}{type.name}
+                        {type.description ? ` - ${type.description}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="form-group">
                   <input
@@ -402,25 +436,24 @@ const RegisterForm: React.FC = () => {
                       type="text"
                       placeholder="CEP"
                       value={formData.companyCep}
-                      onChange={(e) => {
-                        handleInputChange('companyCep', e.target.value);
-                        handleCepChange(e.target.value, true);
-                      }}
+                      onChange={(e) => handleCepChange(e.target.value, true)}
                       required
                       disabled={isLoading}
                     />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
+                  <div className="form-group-row">
+                    <div className="form-group" style={{ flex: 3 }}>
                       <input
                         type="text"
                         placeholder="Rua"
                         value={formData.companyStreet}
-                        readOnly
+                        onChange={(e) => handleInputChange('companyStreet', e.target.value)}
+                        required
+                        disabled={isLoading}
                       />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" style={{ flex: 1 }}>
                       <input
                         type="text"
                         placeholder="Número"
@@ -432,23 +465,15 @@ const RegisterForm: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        placeholder="Bairro"
-                        value={formData.companyNeighborhood}
-                        readOnly
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        placeholder="Cidade"
-                        value={formData.companyCity}
-                        readOnly
-                      />
-                    </div>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      placeholder="Bairro"
+                      value={formData.companyNeighborhood}
+                      onChange={(e) => handleInputChange('companyNeighborhood', e.target.value)}
+                      required
+                      disabled={isLoading}
+                    />
                   </div>
 
                   <div className="form-group">
@@ -462,16 +487,15 @@ const RegisterForm: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="working-days">
+                <div className="business-days-section">
                   <h4>Dias de Atendimento</h4>
                   <div className="days-grid">
                     {weekDays.map((day) => (
                       <button
                         key={day.index}
                         type="button"
-                        className={`day-toggle ${formData.businessDays.includes(day.index) ? 'active' : ''}`}
+                        className={`day-button ${formData.businessDays.includes(day.index) ? 'active' : ''}`}
                         onClick={() => handleBusinessDayToggle(day.index)}
-                        disabled={isLoading}
                       >
                         {day.name}
                       </button>
@@ -481,20 +505,16 @@ const RegisterForm: React.FC = () => {
               </>
             )}
 
-            <button type="submit" className="register-btn" disabled={isLoading}>
-              {isLoading ? 'PROCESSANDO...' : step === 2 ? 'CADASTRAR' : 'PRÓXIMO'}
-            </button>
+            {error && <p className="error-message">{error}</p>}
 
-            {error && (
-              <div className="error-message" style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}>
-                {error}
-              </div>
-            )}
+            <button type="submit" className="submit-button" disabled={isLoading}>
+              {isLoading ? 'Aguarde...' : (step === 1 ? 'Próximo' : 'Finalizar Cadastro')}
+            </button>
           </form>
 
-          <div className="login-link">
-            <p>Já tem uma conta? <a href="/login">Entrar</a></p>
-          </div>
+          <p className="login-link">
+            Já tem uma conta? <a href="/login">Faça login</a>
+          </p>
         </div>
       </div>
     </div>
@@ -502,3 +522,4 @@ const RegisterForm: React.FC = () => {
 };
 
 export default RegisterForm;
+
