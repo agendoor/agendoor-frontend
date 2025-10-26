@@ -346,6 +346,7 @@ const RegisterForm: React.FC = () => {
                         type="text"
                         placeholder="Número"
                         value={formData.number}
+                        readOnly={formData.street === ''}
                         onChange={(e) => handleInputChange('number', e.target.value)}
                         required
                         disabled={isLoading}
@@ -369,6 +370,7 @@ const RegisterForm: React.FC = () => {
                       type="text"
                       placeholder="Complemento (opcional)"
                       value={formData.complement}
+                        readOnly={formData.street === ''}
                       onChange={(e) => handleInputChange('complement', e.target.value)}
                       disabled={isLoading}
                     />
@@ -458,6 +460,7 @@ const RegisterForm: React.FC = () => {
                         type="text"
                         placeholder="Número"
                         value={formData.companyNumber}
+                        readOnly={formData.companyStreet === ''}
                         onChange={(e) => handleInputChange('companyNumber', e.target.value)}
                         required
                         disabled={isLoading}
@@ -481,6 +484,7 @@ const RegisterForm: React.FC = () => {
                       type="text"
                       placeholder="Complemento (opcional)"
                       value={formData.companyComplement}
+                        readOnly={formData.companyStreet === ''}
                       onChange={(e) => handleInputChange('companyComplement', e.target.value)}
                       disabled={isLoading}
                     />
